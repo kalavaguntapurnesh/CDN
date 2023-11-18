@@ -1,0 +1,26 @@
+# This is an example Starter pipeline configuration
+# Use a skeleton to build, test and deploy using manual and parallel steps
+# -----
+# You can specify a custom docker image from Docker Hub as your build environment.
+
+image: atlassian/default-image:3
+
+pipelines:
+  custom: # Pipelines that are triggered manually via the Bitbucket GUI
+    init: # -- First time init
+    - step:
+        caches:
+          - composer
+        script:
+          - apt-get update
+          - apt-get -qq install git-ftp
+          - git ftp init -u "$FTP_USERNAME" -p "$FTP_PASSWORD" ftp://$FTP_HOST
+
+    deploy-all: # -- Deploys all files from the selected commit
+    - step:
+        caches:
+          - composer
+        script:
+          - apt-get update
+          - apt-get -qq install git-ftp
+          - git ftp push -u "$FTP_USERNAME" -p "$FTP_PASSWORD" ftp://$FTP_HOST --all
